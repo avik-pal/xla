@@ -1,4 +1,4 @@
-/* Copyright 2022 The OpenXLA Authors.
+/* Copyright 2025 The OpenXLA Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,21 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include <gtest/gtest.h>
+#ifndef XLA_HLO_EXPERIMENTAL_AUTO_SHARDING_STABLEHLO_UTILS_H_
+#define XLA_HLO_EXPERIMENTAL_AUTO_SHARDING_STABLEHLO_UTILS_H_
 
-int main(int argc, char** argv) {
-  // Skip all tests. This is to verify that implementation tests build
-  // successfully without registering an IFRT client factory.
-  //
-  // Actual implementation tests may link with the standard `gtest_main` to run
-  // all tests or define a custom `main` function to filter out some tests.
-  const char* kFilter = "-*";
-#ifdef GTEST_FLAG_SET
-  GTEST_FLAG_SET(filter, kFilter);
-#else
-  testing::GTEST_FLAG(filter) = kFilter;
-#endif
+#include <memory>
 
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include "absl/status/statusor.h"
+#include "mlir/IR/BuiltinOps.h"
+#include "xla/hlo/ir/hlo_module.h"
+
+namespace xla::spmd {
+// Converts StableHLO module (with Shardy dialect) to XLA HLO.
+absl::StatusOr<std::unique_ptr<xla::HloModule>> ConvertShardyToHlo(
+    mlir::ModuleOp shardy_stablehlo_module);
+
+}  // namespace xla::spmd
+
+#endif  // XLA_HLO_EXPERIMENTAL_AUTO_SHARDING_STABLEHLO_UTILS_H_
