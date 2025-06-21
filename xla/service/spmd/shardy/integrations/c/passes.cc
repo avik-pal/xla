@@ -1,4 +1,4 @@
-/* Copyright 2017 The OpenXLA Authors.
+/* Copyright 2025 The OpenXLA Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,18 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "xla/tests/test_macros.h"
+#include "xla/service/spmd/shardy/integrations/c/passes.h"
 
-#include "tsl/platform/logging.h"
+#include "xla/service/spmd/shardy/sdy_round_trip/import_shardy_attrs.h"
 
-namespace xla {
-
-static bool InitModule() {
-  *TestPlatform() = XLA_PLATFORM;
-  VLOG(1) << "TestPlatform: " << *TestPlatform();
-  return true;
+void mlirRegisterAllXlaSdyPassesAndPipelines() {
+  // TODO(b/426219837): Register all passes and pipelines of XLA Shardy.
+  xla::sdy::registerSdyRoundTripImportShardyAttrsPass();
 }
-
-static bool module_initialized = InitModule();
-
-}  // namespace xla

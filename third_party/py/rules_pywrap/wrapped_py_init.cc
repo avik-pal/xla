@@ -1,4 +1,4 @@
-/* Copyright 2022 The OpenXLA Authors.
+/* Copyright 2025 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,21 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include <gtest/gtest.h>
-
-int main(int argc, char** argv) {
-  // Skip all tests. This is to verify that implementation tests build
-  // successfully without registering an IFRT client factory.
-  //
-  // Actual implementation tests may link with the standard `gtest_main` to run
-  // all tests or define a custom `main` function to filter out some tests.
-  const char* kFilter = "-*";
-#ifdef GTEST_FLAG_SET
-  GTEST_FLAG_SET(filter, kFilter);
+#if defined(WIN32) || defined(_WIN32)
+#define EXPORT_SYMBOL __declspec(dllexport)
 #else
-  testing::GTEST_FLAG(filter) = kFilter;
+#define EXPORT_SYMBOL __attribute__((visibility("default")))
 #endif
 
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#define TOKEN_CONCAT(a, b) a##b
+#define WRAPPED_PY_MODULE(name)                                  \
+  extern "C" void *TOKEN_CONCAT(Wrapped_PyInit_, name)();        \
+  extern "C" EXPORT_SYMBOL void *TOKEN_CONCAT(PyInit_, name)() { \
+    return TOKEN_CONCAT(Wrapped_PyInit_, name)();                \
+  }
+
+WRAPPED_PY_MODULE(WRAPPED_PY_MODULE_NAME)
